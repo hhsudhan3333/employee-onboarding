@@ -5,9 +5,9 @@ import { Request, Response } from "express";
 
 const router = Router();
 
-router.use(authMiddleware); // employee or admin can access, controller handles roles if needed
+router.use(authMiddleware);
 
-router.get('/:id', getProfile); // id param optional — if missing uses token
+router.get('/', getProfile);
 router.put('/:id/steps/:stepNo', updateStepStatus);
 router.put('/:id/password', changePassword);
 

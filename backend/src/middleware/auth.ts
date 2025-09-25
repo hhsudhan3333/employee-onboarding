@@ -17,7 +17,6 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
   const token = header.replace('Bearer ', '');
   try {
     const payload = jwt.verify(token, JWT_SECRET) as any;
-    // payload: { id, role, email, iat, exp }
     req.user = payload;
     req.role = payload.role;
     next();
@@ -26,7 +25,6 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
   }
 };
 
-// admin only
 export const adminOnly = (req: AuthRequest, res: Response, next: NextFunction) => {
   if (req.role !== 'admin') return fail(res, 'Admin only', null, 403);
   next();

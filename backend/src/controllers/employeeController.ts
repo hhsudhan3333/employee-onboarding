@@ -24,14 +24,13 @@ export const getProfile = async (req: Request, res: Response) => {
 export const updateStepStatus = async (req: Request, res: Response) => {
   try {
     const { id, stepNo } = req.params;
-    const { status } = req.body; // 'pending' or 'completed'
+    const { status } = req.body;
     const emp = await Employee.findOne({ id });
     if (!emp) return fail(res, 'Employee not found', null, 404);
 
     const step = emp.steps.find(s => String(s.stepNo) === String(stepNo));
     if (!step) return fail(res, 'Step not found', null, 404);
     step.status = status === 'completed' ? 'completed' : 'pending';
-    // recalc status
     const allCompleted = emp.steps.every(s => s.status === 'completed');
     emp.status = allCompleted ? 'completed' : (emp.steps.some(s=>s.status==='completed') ? 'in_progress' : 'pending');
     await emp.save();

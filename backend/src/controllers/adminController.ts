@@ -12,7 +12,7 @@ export const createEmployee = async (req: Request, res: Response) => {
     const existing = await Employee.findOne({ email });
     if (existing) return fail(res, 'Employee with this email already exists', null, 400);
 
-    const tempPassword = password || (uuidv4().slice(0,8)); // short temp
+    const tempPassword = password || (uuidv4().slice(0,8));
     const hashed = await bcrypt.hash(tempPassword, 10);
 
     const emp = await Employee.create({
@@ -60,28 +60,5 @@ export const listEmployees = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     return fail(res, 'List employees failed', err);
-  }
-};
-
-export const giveAccess = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { password } = req.body; // optionally set password
-    const emp = await Employee.findOne({ id });
-    if (!emp) return fail(res, 'Employee not found', null, 404);
-    if (password) {
-      emp.password = await bcrypt.hash(password, 10);
-    } else if (!emp.password) {
-      // generate temporary
-      const temp = uuidv4().slice(0,8);
-      emp.password = await bcrypt.hash(temp, 10);
-      await emp.save();
-      return success(res, { tempPassword: temp }, 'Access granted, temp password created');
-    }
-    await emp.save();
-    return success(res, { message: 'Access updated' });
-  } catch (err) {
-    console.error(err);
-    return fail(res, 'Give access failed', err);
   }
 };

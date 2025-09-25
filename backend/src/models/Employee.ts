@@ -9,12 +9,12 @@ export type Step = {
 };
 
 export interface IEmployee extends Document {
-  id: string;           // uuid string
+  id: string;
   name: string;
   contact?: string;
   email: string;
   joiningDate?: Date;
-  password?: string;     // hashed
+  password?: string;
   steps: Step[];
   status: 'pending' | 'in_progress' | 'completed';
   createdAt: Date;
@@ -34,7 +34,7 @@ const EmployeeSchema = new Schema<IEmployee>({
   email: { type: String, required: true, unique: true, index: true },
   joiningDate: { type: Date },
   password: { type: String },
-  steps: { type: [StepSchema], default: []},
+  steps: { type: [StepSchema], default: () => DEFAULT_STEPS.map(step => ({ ...step })) }, 
   status: { type: String, enum: ['pending','in_progress','completed'], default: 'pending' }
 }, { timestamps: true });
 

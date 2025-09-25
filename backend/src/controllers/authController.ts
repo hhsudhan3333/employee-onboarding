@@ -6,7 +6,12 @@ import Employee from '../models/Employee';
 import { success, fail } from '../utils/response';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
+
+const plainPassword = "Admin@123";
+bcrypt.hash(plainPassword, 10).then((hash) => {
+  console.log("Hashed Password:", hash);
+});
 
 export const adminLogin = async (req: Request, res: Response) => {
   try {
@@ -28,7 +33,6 @@ export const employeeLogin = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const emp = await Employee.findOne({ email });
     if (!emp) return fail(res, 'Invalid credentials', null, 401);
-    // if password not set: return fail (or allow first-time create a temp password)
     if (!emp.password) return fail(res, 'No login set for this employee', null, 403);
     const ok = await bcrypt.compare(password, emp.password);
     if (!ok) return fail(res, 'Invalid credentials', null, 401);
